@@ -1,4 +1,5 @@
 const STORAGE_KEY = "hours-accounted-for-v1";
+const THEME_STORAGE_KEY = "monthly-hours-theme-v1";
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -60,6 +61,7 @@ function isValidState(value) {
 
 let storageNotice = "";
 let state = { ...initialState };
+let isDarkMode = false;
 try {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -75,6 +77,22 @@ try {
   storageNotice = "Saved planner data could not be loaded. A fresh plan is ready.";
   console.error("Unable to load saved planner data.", error);
 }
+
+try {
+  isDarkMode = localStorage.getItem(THEME_STORAGE_KEY) === "dark";
+} catch (error) {
+  console.error("Unable to load the saved color theme.", error);
+}
+
+function applyTheme() {
+  document.documentElement.dataset.theme = isDarkMode ? "dark" : "light";
+  const toggle = document.querySelector("#theme-toggle");
+  toggle.setAttribute("aria-label", `Switch to ${isDarkMode ? "light" : "dark"} mode`);
+  toggle.innerHTML = `<span class="theme-toggle-icon" aria-hidden="true">${isDarkMode ? "☀" : "☾"}</span><span>${isDarkMode ? "Light" : "Dark"} mode</span>`;
+  document.querySelector('meta[name="theme-color"]').content = isDarkMode ? "#201c23" : "#f7f5f8";
+}
+
+applyTheme();
 
 const app = document.querySelector("#app");
 
@@ -115,6 +133,13 @@ function formatHours(hours) {
   return `${Number.isInteger(rounded) ? rounded : Number(rounded.toFixed(2))} hrs`;
 }
 
+function formatCompactHours(hours) {
+  const totalMinutes = Math.round(Number(hours) * 60);
+  const wholeHours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${wholeHours}h${minutes ? `${minutes}m` : ""}`;
+}
+
 function dateKey(day) {
   return `${state.year}-${String(state.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
@@ -133,6 +158,25 @@ function workerTotal(worker) {
     }
     return total + Number(worker.standardHours);
   }, 0);
+}
+
+function formatScheduleDate(key) {
+  const [, month, day] = key.split("-").map(Number);
+  const weekday = scheduleWeekday(key);
+  return `${weekday} ${MONTH_NAMES[month - 1]} ${day}`;
+}
+
+function scheduleWeekday(key, style = "long") {
+  const [, month, day] = key.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-US", { weekday: style })
+    .format(new Date(state.year, month - 1, day));
+}
+
+function unscheduledDays() {
+  const scheduledDays = new Set(state.workers.flatMap((worker) => worker.days));
+  const dayCount = new Date(state.year, state.month + 1, 0).getDate();
+  return Array.from({ length: dayCount }, (_, index) => dateKey(index + 1))
+    .filter((key) => !scheduledDays.has(key));
 }
 
 function saveState() {
@@ -161,9 +205,9 @@ function calendarMarkup({ selectable = false, adjustments = false, allWorkers = 
         if (!person.days.includes(key)) return [];
         const adjusted = Object.prototype.hasOwnProperty.call(person.hoursByDay, key);
         const hours = adjusted ? Number(person.hoursByDay[key]) : Number(person.standardHours);
-        return [`<span class="team-shift worker-color-${workerIndex % 6}${adjusted ? " is-adjusted" : ""}"><span class="team-shift-name">${escapeHtml(person.name)}</span><strong>${formatHours(hours)}</strong></span>`];
+        return [`<span class="team-shift worker-color-${workerIndex % 6}${adjusted ? " is-adjusted" : ""}"><span class="team-shift-name">${escapeHtml(person.name)}</span><strong>${formatCompactHours(hours)}</strong></span>`];
       });
-      const dayLabel = `${MONTH_NAMES[state.month]} ${day}${shifts.length ? `: ${state.workers.filter((person) => person.days.includes(key)).map((person) => `${person.name}, ${formatHours(Object.prototype.hasOwnProperty.call(person.hoursByDay, key) ? person.hoursByDay[key] : person.standardHours)}`).join("; ")}` : ", no workers scheduled"}`;
+      const dayLabel = `${MONTH_NAMES[state.month]} ${day}${shifts.length ? `: ${state.workers.filter((person) => person.days.includes(key)).map((person) => `${person.name}, ${formatCompactHours(Object.prototype.hasOwnProperty.call(person.hoursByDay, key) ? person.hoursByDay[key] : person.standardHours)}`).join("; ")}` : ", no workers scheduled"}`;
       cells.push(`<div class="calendar-day team-calendar-day${shifts.length ? " has-shifts" : ""}" aria-label="${escapeHtml(dayLabel)}"><span class="day-number">${day}</span>${shifts.length ? `<div class="team-shifts">${shifts.join("")}</div>` : '<span class="team-empty">—</span>'}</div>`);
       continue;
     }
@@ -175,13 +219,13 @@ function calendarMarkup({ selectable = false, adjustments = false, allWorkers = 
       adjusted ? "is-adjusted" : "",
     ].filter(Boolean).join(" ");
     const hoursText = selected && !selectable
-      ? `<span class="day-hours">${formatHours(hoursForDay(worker, day))}</span>`
+      ? `<span class="day-hours">${formatCompactHours(hoursForDay(worker, day))}</span>`
       : "";
-    const dayLabel = `${MONTH_NAMES[state.month]} ${day}${selected ? `, ${formatHours(hoursForDay(worker, day))}` : ""}`;
+    const dayLabel = `${MONTH_NAMES[state.month]} ${day}${selected ? `, ${formatCompactHours(hoursForDay(worker, day))}` : ""}`;
     if (selectable) {
       cells.push(`<button type="button" class="${classes}" data-day="${day}" aria-pressed="${Boolean(selected)}" aria-label="${escapeHtml(dayLabel)}"><span class="day-number">${day}</span>${hoursText}</button>`);
     } else if (adjustments && selected) {
-      cells.push(`<button type="button" class="${classes}" data-adjust-day="${day}" aria-label="Adjust hours for ${escapeHtml(dayLabel)}"><span class="day-number">${day}</span><span class="day-hours">${formatHours(hoursForDay(worker, day))}</span></button>`);
+      cells.push(`<button type="button" class="${classes}" data-adjust-day="${day}" aria-label="Adjust hours for ${escapeHtml(dayLabel)}"><span class="day-number">${day}</span><span class="day-hours">${formatCompactHours(hoursForDay(worker, day))}</span></button>`);
     } else {
       cells.push(`<div class="${classes}" aria-label="${escapeHtml(dayLabel)}"><span class="day-number">${day}</span>${hoursText}</div>`);
     }
@@ -190,7 +234,7 @@ function calendarMarkup({ selectable = false, adjustments = false, allWorkers = 
   return `
     <div class="calendar-wrap${allWorkers ? " team-calendar" : ""}">
       <div class="calendar-caption">
-        <h3 class="calendar-month">${allWorkers ? "Everyone's schedule" : monthLabel()}</h3>
+        <h3 class="calendar-month">${allWorkers ? "Combined schedule" : monthLabel()}</h3>
         <div class="calendar-legend">
           ${allWorkers
             ? `${state.workers.map((person, index) => `<span class="legend-item"><span class="legend-swatch worker-color-${index % 6}"></span>${escapeHtml(person.name)}</span>`).join("")}<span class="legend-item"><span class="legend-swatch adjusted"></span> Adjusted hours</span>`
@@ -392,17 +436,11 @@ function renderStep() {
       const available = Number(state.availableHours);
       const difference = available - totalHours;
       const under = difference >= 0;
+      const emptyDays = unscheduledDays();
       return `
         <h2 class="step-heading">${monthLabel()} at a glance</h2>
         <p class="step-copy">Your team schedule compared with the hours available this month.</p>
         ${calendarMarkup({ allWorkers: true })}
-        <div class="worker-list">
-          ${state.workers.map((person) => `
-            <div class="worker-row">
-              <div><span class="worker-name">${escapeHtml(person.name)}</span><span class="worker-meta">${person.days.length} ${person.days.length === 1 ? "day" : "days"} scheduled</span></div>
-              <span class="worker-hours">${formatHours(workerTotal(person))}</span>
-            </div>`).join("")}
-        </div>
         <div class="summary-strip">
           <div class="summary-stat"><span>Available</span><strong>${formatHours(available)}</strong></div>
           <div class="summary-stat"><span>Scheduled</span><strong>${formatHours(totalHours)}</strong></div>
@@ -417,8 +455,46 @@ function renderStep() {
               : `The team is ${formatHours(Math.abs(difference))} over the ${formatHours(available)} available for this month.`}</p>
           </div>
         </div>
+        <details class="summary-details" open>
+          <summary>Detailed schedule and additional information</summary>
+          <div class="summary-details-content">
+            <section class="worker-breakdowns" aria-label="Worker schedules">
+              ${state.workers.map((person, index) => `
+                <details class="worker-breakdown" open>
+                  <summary>
+                    <span>${escapeHtml(person.name)}</span>
+                    <span class="worker-breakdown-meta">${person.days.length} ${person.days.length === 1 ? "day" : "days"} · ${formatCompactHours(workerTotal(person))}</span>
+                  </summary>
+                  <ul class="worker-day-list">
+                    ${person.days
+                      .slice()
+                      .sort()
+                      .map((key) => {
+                        const day = Number(key.slice(-2));
+                        return `<li><time datetime="${escapeHtml(key)}" aria-label="${escapeHtml(formatScheduleDate(key))}"><span class="worker-day-number">${day}</span><span class="worker-day-weekday">${escapeHtml(scheduleWeekday(key, "short"))}</span></time><strong class="worker-day-hours">${formatCompactHours(hoursForDay(person, day))}</strong></li>`;
+                      }).join("")}
+                  </ul>
+                </details>`).join("")}
+            </section>
+            <section class="unscheduled-section" aria-labelledby="unscheduled-heading">
+              <h3 id="unscheduled-heading">
+                ${emptyDays.length ? '<span class="unscheduled-alert-icon" aria-hidden="true">!</span>' : ""}
+                Days with no one scheduled <span class="unscheduled-count">(${emptyDays.length})</span>
+              </h3>
+              ${emptyDays.length
+                ? `<ul class="unscheduled-days">${emptyDays.map((key) => {
+                  const day = Number(key.slice(-2));
+                  const date = new Date(state.year, state.month, day);
+                  const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
+                  return `<li><time datetime="${escapeHtml(key)}" aria-label="${escapeHtml(formatScheduleDate(key))}"><span class="unscheduled-day-number">${day}</span><span class="unscheduled-day-weekday">${weekday}</span></time></li>`;
+                }).join("")}</ul>`
+                : '<p class="detail-note">Every day this month has at least one person scheduled.</p>'}
+            </section>
+          </div>
+        </details>
         <div class="wizard-actions">
           ${backButton()}
+          ${actionButton("Print / export", "print-summary", "secondary")}
           ${actionButton("Start a new month", "new-month", "secondary")}
         </div>`;
     }
@@ -596,6 +672,16 @@ app.addEventListener("submit", (event) => {
   }
 });
 
+document.querySelector("#theme-toggle").addEventListener("click", () => {
+  isDarkMode = !isDarkMode;
+  applyTheme();
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? "dark" : "light");
+  } catch (error) {
+    console.error("Unable to save the selected color theme.", error);
+  }
+});
+
 app.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button) return;
@@ -679,6 +765,9 @@ app.addEventListener("click", (event) => {
       state = { ...initialState, year: today.getFullYear(), month: today.getMonth() };
       saveState();
       render();
+      break;
+    case "print-summary":
+      window.print();
       break;
     case "decrease-hour":
     case "increase-hour": {
