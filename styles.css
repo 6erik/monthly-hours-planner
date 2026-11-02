@@ -29,18 +29,18 @@
   --capacity-over-bg: #fff5ec;
   --capacity-over-ink: #995323;
   --capacity-over-icon-bg: #f9e3ce;
-  --worker-0-ink: #174ea6;
-  --worker-0-pale: #e8f0fe;
-  --worker-1-ink: #a14200;
-  --worker-1-pale: #fce8d5;
-  --worker-2-ink: #137333;
-  --worker-2-pale: #e6f4ea;
-  --worker-3-ink: #8430ce;
-  --worker-3-pale: #f3e8fd;
-  --worker-4-ink: #b3261e;
-  --worker-4-pale: #fce8e6;
-  --worker-5-ink: #007c83;
-  --worker-5-pale: #e0f2f1;
+  --worker-0-ink: #315b91;
+  --worker-0-pale: #e9f0f8;
+  --worker-1-ink: #8a531f;
+  --worker-1-pale: #f8efe3;
+  --worker-2-ink: #934c6e;
+  --worker-2-pale: #f8eaf0;
+  --worker-3-ink: #67478f;
+  --worker-3-pale: #f0eaf7;
+  --worker-4-ink: #9c4540;
+  --worker-4-pale: #f8e9e7;
+  --worker-5-ink: #286d6b;
+  --worker-5-pale: #e6f2f1;
   --shadow: 0 3px 14px rgb(47 35 54 / 5%);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -369,31 +369,43 @@ h1 {
 }
 
 .worker-color-0 {
+  --worker-color-ink: var(--worker-0-ink);
+  --worker-color-pale: var(--worker-0-pale);
   color: var(--worker-0-ink);
   background: var(--worker-0-pale);
 }
 
 .worker-color-1 {
+  --worker-color-ink: var(--worker-1-ink);
+  --worker-color-pale: var(--worker-1-pale);
   color: var(--worker-1-ink);
   background: var(--worker-1-pale);
 }
 
 .worker-color-2 {
+  --worker-color-ink: var(--worker-2-ink);
+  --worker-color-pale: var(--worker-2-pale);
   color: var(--worker-2-ink);
   background: var(--worker-2-pale);
 }
 
 .worker-color-3 {
+  --worker-color-ink: var(--worker-3-ink);
+  --worker-color-pale: var(--worker-3-pale);
   color: var(--worker-3-ink);
   background: var(--worker-3-pale);
 }
 
 .worker-color-4 {
+  --worker-color-ink: var(--worker-4-ink);
+  --worker-color-pale: var(--worker-4-pale);
   color: var(--worker-4-ink);
   background: var(--worker-4-pale);
 }
 
 .worker-color-5 {
+  --worker-color-ink: var(--worker-5-ink);
+  --worker-color-pale: var(--worker-5-pale);
   color: var(--worker-5-ink);
   background: var(--worker-5-pale);
 }
@@ -726,6 +738,22 @@ button:focus-visible {
   background: var(--accent-pale);
   font-size: 13px;
   font-weight: 700;
+}
+
+.worker-day-number.worker-color-0,
+.worker-day-number.worker-color-1,
+.worker-day-number.worker-color-2,
+.worker-day-number.worker-color-3,
+.worker-day-number.worker-color-4,
+.worker-day-number.worker-color-5 {
+  border-color: var(--worker-color-ink);
+  color: var(--worker-color-ink);
+  background: var(--worker-color-pale);
+}
+
+.worker-breakdown-name {
+  padding: 4px 8px;
+  border-radius: 5px;
 }
 
 .worker-day-weekday {
@@ -1192,18 +1220,18 @@ button:focus-visible {
   --capacity-over-bg: #40292b;
   --capacity-over-ink: #ffaaa3;
   --capacity-over-icon-bg: #5a3032;
-  --worker-0-ink: #a9caff;
-  --worker-0-pale: #263a54;
-  --worker-1-ink: #ffd0a1;
-  --worker-1-pale: #4b3527;
-  --worker-2-ink: #a1e5b3;
-  --worker-2-pale: #263f30;
-  --worker-3-ink: #d7b4f7;
-  --worker-3-pale: #40314e;
-  --worker-4-ink: #ffb4ad;
-  --worker-4-pale: #4a3030;
-  --worker-5-ink: #9cddda;
-  --worker-5-pale: #253f40;
+  --worker-0-ink: #aec8ed;
+  --worker-0-pale: #26384e;
+  --worker-1-ink: #e8bd91;
+  --worker-1-pale: #443326;
+  --worker-2-ink: #e3a9c1;
+  --worker-2-pale: #422d38;
+  --worker-3-ink: #c6afe5;
+  --worker-3-pale: #3a3048;
+  --worker-4-ink: #e6aaa5;
+  --worker-4-pale: #432d2d;
+  --worker-5-ink: #9dd5d2;
+  --worker-5-pale: #263b3b;
   --shadow: 0 3px 14px rgb(0 0 0 / 20%);
 }
 
@@ -1351,67 +1379,17 @@ button:focus-visible {
 }
 
 @page {
-  size: landscape;
+  size: portrait;
   margin: 8mm;
 }
 
 @media print {
-  :root[data-theme="dark"] {
-    color-scheme: light;
-    --ink: #222;
-    --muted: #555;
-    --line: #ddd;
-    --control-line: #ddd;
-    --paper: #fff;
-    --canvas: #fff;
-    --subtle-surface: #faf8fb;
-    --soft-surface: #f6f7f3;
-    --accent: #79518b;
-    --accent-dark: #624071;
-    --accent-pale: #f1eaf4;
-    --orange: #c97a45;
-    --orange-pale: #fff2e9;
-    --danger-ink: #b3261e;
-    --danger-pale: #fce8e6;
-    --danger-border: #f0c7c3;
-    --success-ink: #137333;
-    --success-pale: #e6f4ea;
-    --warning-ink: #a75e2d;
-    --warning-pale: #fff2e9;
-    --danger-solid: #b3261e;
-    --capacity-border: #dbcce1;
-    --capacity-bg: #f5f0f7;
-    --capacity-icon-ink: #624071;
-    --capacity-icon-bg: #e8ddec;
-    --capacity-over-border: #f0d0b8;
-    --capacity-over-bg: #fff5ec;
-    --capacity-over-ink: #995323;
-    --capacity-over-icon-bg: #f9e3ce;
-    --worker-0-ink: #174ea6;
-    --worker-0-pale: #e8f0fe;
-    --worker-1-ink: #a14200;
-    --worker-1-pale: #fce8d5;
-    --worker-2-ink: #137333;
-    --worker-2-pale: #e6f4ea;
-    --worker-3-ink: #8430ce;
-    --worker-3-pale: #f3e8fd;
-    --worker-4-ink: #b3261e;
-    --worker-4-pale: #fce8e6;
-    --worker-5-ink: #007c83;
-    --worker-5-pale: #e0f2f1;
-    --shadow: none;
-  }
-
-  :root[data-theme="dark"] .team-calendar {
-    background: #fff;
-  }
-
   body {
     min-width: 0;
-    color: #222;
+    color: #111;
     background: #fff;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+    print-color-adjust: economy;
+    -webkit-print-color-adjust: economy;
   }
 
   .page-shell {
@@ -1445,19 +1423,23 @@ button:focus-visible {
   }
 
   .step-heading {
-    margin: 0 0 2mm;
-    font-size: 17pt;
+    margin: 0 0 1mm;
+    color: #111;
+    font-size: 14pt;
   }
 
-  .step-copy {
-    margin-bottom: 3mm;
-    font-size: 8pt;
+  .step-copy,
+  .summary-strip,
+  .capacity-status {
+    display: none !important;
   }
 
   .team-calendar {
     margin: 0 0 3mm;
-    padding: 2mm;
+    padding: 0;
+    border: 0;
     background: #fff;
+    break-inside: avoid;
   }
 
   .team-calendar .calendar-caption {
@@ -1465,12 +1447,28 @@ button:focus-visible {
   }
 
   .calendar-month {
+    color: #111;
     font-size: 11pt;
   }
 
   .calendar-legend {
-    gap: 2mm 4mm;
+    gap: 1mm 3mm;
+    color: #111;
     font-size: 7pt;
+  }
+
+  .legend-swatch.worker-color-0,
+  .legend-swatch.worker-color-1,
+  .legend-swatch.worker-color-2,
+  .legend-swatch.worker-color-3,
+  .legend-swatch.worker-color-4,
+  .legend-swatch.worker-color-5 {
+    background: #555;
+  }
+
+  .legend-swatch.adjusted {
+    background: #fff;
+    border: 1px solid #555;
   }
 
   .team-calendar .calendar-grid {
@@ -1480,109 +1478,83 @@ button:focus-visible {
 
   .weekday {
     padding: 0 1mm 1mm;
-    font-size: 7pt;
+    color: #111;
+    font-size: 8pt;
   }
 
   .team-calendar-day,
   .team-calendar .calendar-day.is-empty {
-    min-height: 15mm;
-    padding: 1mm;
-    border-radius: 1mm;
+    min-height: 34mm;
+    padding: 1.5mm;
+    border: 0.35mm solid #777;
+    border-radius: 0;
+    background: #fff !important;
+    break-inside: avoid;
   }
 
   .day-number {
-    font-size: 7pt;
+    color: #111;
+    font-size: 8pt;
   }
 
   .team-shifts {
-    gap: 0.5mm;
-    margin-top: 0.5mm;
+    gap: 0.7mm;
+    margin-top: 1mm;
   }
 
   .team-shift {
     gap: 1mm;
-    padding: 0.5mm;
-    border-radius: 0.5mm;
-    font-size: 6pt;
+    padding: 0.5mm 1mm;
+    border: 0.2mm solid #bbb;
+    border-radius: 0;
+    color: #111 !important;
+    background: #fff !important;
+    font-size: 7pt;
   }
 
   .team-shift strong {
-    font-size: 5.5pt;
+    color: #111;
+    font-size: 7pt;
   }
 
   .team-empty {
-    margin-top: 1mm;
-    font-size: 7pt;
-  }
-
-  .summary-strip {
-    gap: 3mm 8mm;
-    margin: 2mm 0;
-    padding: 2mm 3mm;
-  }
-
-  .summary-stat span {
-    font-size: 7pt;
-  }
-
-  .summary-stat strong {
+    color: #999;
     font-size: 10pt;
   }
 
-  .capacity-status {
-    gap: 2mm;
-    padding: 2mm 3mm;
-  }
-
-  .status-icon {
-    width: 6mm;
-    height: 6mm;
-  }
-
-  .capacity-status strong {
-    margin: 0 0 1mm;
-    font-size: 8pt;
-  }
-
-  .capacity-status p {
-    font-size: 7pt;
-  }
-
   .summary-details {
-    margin: 2mm 0 0;
+    margin: 0;
     border: 0;
   }
 
   .summary-details > summary,
   .worker-breakdown > summary {
     padding: 1mm 0;
-    font-size: 8pt;
+    color: #111;
+    font-size: 9pt;
   }
 
   .summary-details-content {
-    grid-template-columns: minmax(0, 2fr) minmax(40mm, 0.7fr);
-    gap: 3mm;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2mm;
     padding: 1mm 0 0;
   }
 
   .unscheduled-section h3 {
     margin-bottom: 1mm;
+    color: #111;
     font-size: 8pt;
   }
 
-  .unscheduled-alert-icon {
-    width: 4mm;
-    height: 4mm;
-    font-size: 7pt;
-  }
-
   .unscheduled-days {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7mm;
+    grid-template-columns: repeat(auto-fill, minmax(24mm, 1fr));
+    gap: 1mm;
   }
 
   .unscheduled-days li {
-    border-radius: 0.7mm;
+    border-color: #bbb;
+    border-radius: 0;
+    background: #fff;
   }
 
   .unscheduled-days time,
@@ -1592,60 +1564,80 @@ button:focus-visible {
   }
 
   .unscheduled-day-number {
-    width: 4mm;
-    height: 4mm;
-    border-radius: 0.5mm;
-    font-size: 6.5pt;
-  }
-
-  .unscheduled-day-weekday {
-    font-size: 6.5pt;
+    width: 5mm;
+    height: 5mm;
+    border: 0.2mm solid #777;
+    border-radius: 0;
+    color: #111;
+    background: #fff;
+    font-size: 7pt;
   }
 
   .worker-day-number {
-    width: 4mm;
-    height: 4mm;
-    border-radius: 0.5mm;
-    font-size: 6.5pt;
+    width: 5mm;
+    height: 5mm;
+    border: 0.2mm solid #777 !important;
+    border-radius: 0;
+    color: #111 !important;
+    background: #fff !important;
+    font-size: 7pt;
   }
 
+  .unscheduled-day-weekday,
   .worker-day-weekday {
-    font-size: 6.5pt;
+    color: #111;
+    font-size: 7pt;
   }
 
   .detail-note {
-    font-size: 7pt;
+    color: #111;
+    font-size: 8pt;
   }
 
   .worker-breakdowns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-content: start;
-    gap: 1mm 2mm;
+    gap: 2mm 3mm;
   }
 
   .worker-breakdown {
+    border: 0.2mm solid #777;
+    border-radius: 0;
     break-inside: avoid;
   }
 
+  .worker-breakdown-name {
+    padding: 0;
+    color: #111 !important;
+    background: transparent !important;
+    font-size: 9pt;
+  }
+
   .worker-breakdown-meta {
+    color: #333;
     font-size: 7pt;
   }
 
   .worker-day-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5mm 1mm;
+    gap: 1mm;
     padding: 0 1mm 1mm;
   }
 
   .worker-day-list li {
     gap: 1mm;
-    border-radius: 0.7mm;
-    font-size: 6.5pt;
+    border: 0.2mm solid #ccc;
+    border-radius: 0;
+    color: #111;
+    background: #fff;
+    font-size: 7pt;
   }
 
   .worker-day-list li .worker-day-hours {
     margin-right: 1mm;
     padding: 0.5mm 1mm;
+    color: #111;
+    background: #fff;
   }
 
   .summary-details:not([open]) > :not(summary),
@@ -1655,5 +1647,10 @@ button:focus-visible {
 
   .summary-details:not([open]) > .summary-details-content {
     display: grid !important;
+  }
+
+  .summary-details > summary::before,
+  .unscheduled-alert-icon {
+    display: none !important;
   }
 }

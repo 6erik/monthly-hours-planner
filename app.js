@@ -462,7 +462,7 @@ function renderStep() {
               ${state.workers.map((person, index) => `
                 <details class="worker-breakdown" open>
                   <summary>
-                    <span>${escapeHtml(person.name)}</span>
+                    <span class="worker-breakdown-name worker-color-${index % 6}">${escapeHtml(person.name)}</span>
                     <span class="worker-breakdown-meta">${person.days.length} ${person.days.length === 1 ? "day" : "days"} · ${formatCompactHours(workerTotal(person))}</span>
                   </summary>
                   <ul class="worker-day-list">
@@ -471,7 +471,7 @@ function renderStep() {
                       .sort()
                       .map((key) => {
                         const day = Number(key.slice(-2));
-                        return `<li><time datetime="${escapeHtml(key)}" aria-label="${escapeHtml(formatScheduleDate(key))}"><span class="worker-day-number">${day}</span><span class="worker-day-weekday">${escapeHtml(scheduleWeekday(key, "short"))}</span></time><strong class="worker-day-hours">${formatCompactHours(hoursForDay(person, day))}</strong></li>`;
+                        return `<li><time datetime="${escapeHtml(key)}" aria-label="${escapeHtml(formatScheduleDate(key))}"><span class="worker-day-number worker-color-${index % 6}">${day}</span><span class="worker-day-weekday">${escapeHtml(scheduleWeekday(key, "short"))}</span></time><strong class="worker-day-hours">${formatCompactHours(hoursForDay(person, day))}</strong></li>`;
                       }).join("")}
                   </ul>
                 </details>`).join("")}
